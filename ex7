@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct No {
+    int valor;
+    struct No *proximo;
+} No;
+
+No *criar_no(int valor) {
+    No *novo = (No *) malloc(sizeof(No));
+    if (novo == NULL) {
+        printf("Erro de memoria\n");
+        exit(1);
+    }
+    novo->valor = valor;
+    novo->proximo = NULL;
+    return novo;
+}
+
+No *inserir_ordenado(No *inicio, int valor) {
+    No *novo = criar_no(valor);
+
+    if (inicio == NULL || valor < inicio->valor) {
+        novo->proximo = inicio;
+        return novo;
+    }
+
+    No *atual = inicio;
+    while (atual->proximo != NULL && atual->proximo->valor < valor) {
+        atual = atual->proximo;
+    }
+    novo->proximo = atual->proximo;
+    atual->proximo = novo;
+    return inicio;
+}
+
+void imprimir(No *inicio) {
+    No *atual = inicio;
+    while (atual != NULL) {
+        printf("%d -> ", atual->valor);
+        atual = atual->proximo;
+    }
+    printf("NULL\n");
+}
+
+void liberar(No *inicio) {
+    No *atual = inicio;
+    while (atual != NULL) {
+        No *proximo = atual->proximo;
+        free(atual);
+        atual = proximo;
+    }
+}
+
+int main() {
+    No *lista = NULL;
+    int valores[6] = {30, 10, 20, 5, 25, 40};
+    int i;
+
+    for (i = 0; i < 6; i++) {
+        lista = inserir_ordenado(lista, valores[i]);
+        printf("Inseriu %2d: ", valores[i]);
+        imprimir(lista);
+    }
+
+    liberar(lista);
+    return 0;
+}
