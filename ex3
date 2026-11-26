@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct No {
+    int valor;
+    struct No *proximo;
+} No;
+
+No *criar_no(int valor) {
+    No *novo = (No *) malloc(sizeof(No));
+    if (novo == NULL) {
+        printf("Erro de memoria\n");
+        exit(1);
+    }
+    novo->valor = valor;
+    novo->proximo = NULL;
+    return novo;
+}
+
+No *inserir_inicio(No *inicio, int valor) {
+    No *novo = criar_no(valor);
+    novo->proximo = inicio;
+    return novo;
+}
+
+No *inserir_fim(No *inicio, int valor) {
+    No *novo = criar_no(valor);
+    if (inicio == NULL) {
+        return novo;
+    }
+    No *atual = inicio;
+    while (atual->proximo != NULL) {
+        atual = atual->proximo;
+    }
+    atual->proximo = novo;
+    return inicio;
+}
+
+void imprimir(No *inicio) {
+    No *atual = inicio;
+    while (atual != NULL) {
+        printf("%d -> ", atual->valor);
+        atual = atual->proximo;
+    }
+    printf("NULL\n");
+}
+
+void liberar(No *inicio) {
+    No *atual = inicio;
+    while (atual != NULL) {
+        No *proximo = atual->proximo;
+        free(atual);
+        atual = proximo;
+    }
+}
+
+int main() {
+    No *lista = NULL;
+
+    lista = inserir_inicio(lista, 20);
+    printf("Inicio 20: ");
+    imprimir(lista);
+
+    lista = inserir_inicio(lista, 10);
+    printf("Inicio 10: ");
+    imprimir(lista);
+
+    lista = inserir_fim(lista, 30);
+    printf("Fim 30:    ");
+    imprimir(lista);
+
+    lista = inserir_fim(lista, 40);
+    printf("Fim 40:    ");
+    imprimir(lista);
+
+    lista = inserir_inicio(lista, 5);
+    printf("Inicio 5:  ");
+    imprimir(lista);
+
+    liberar(lista);
+    return 0;
+}
