@@ -1,0 +1,12 @@
+1 - Qual a função do campo dado?
+Ele guarda a informação que o nó carrega. Nesse caso é um int, então cada nó guarda um número inteiro. Poderia ser outro tipo (float, char, até outra struct), dependendo do que a lista precisa armazenar.
+
+2 - Qual a função do ponteiro proximo?
+Ele guarda o endereço do próximo nó da lista. É isso que liga um nó ao outro e forma a lista encadeada. Como os nós ficam espalhados na memória, sem o proximo não haveria como saber onde está o nó seguinte. No último nó, o proximo vale NULL, indicando que a lista terminou.
+
+3 - Por que o ponteiro possui o tipo struct No *?
+Porque ele precisa apontar para outro nó, e o nó é uma struct No. O tipo do ponteiro diz ao compilador o que existe no endereço guardado, então com struct No * ele sabe que ali tem um dado e outro proximo, e deixa usar atual->proximo->dado, por exemplo.
+
+Dentro da própria definição é preciso escrever struct No * em vez de só No *, porque o nome No (criado pelo typedef) ainda não existe naquele ponto. Só existe o nome struct No, que já foi declarado na primeira linha da struct.
+
+Também não pode ser struct No proximo (sem o asterisco): o nó teria dentro dele outro nó inteiro, que teria outro dentro, e assim por diante, com tamanho infinito. Com o ponteiro, o nó guarda só um endereço, que tem tamanho fixo.
