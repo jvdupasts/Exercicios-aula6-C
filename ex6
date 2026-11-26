@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct No {
+    int valor;
+    struct No *proximo;
+} No;
+
+No *criar_no(int valor) {
+    No *novo = (No *) malloc(sizeof(No));
+    if (novo == NULL) {
+        printf("Erro de memoria\n");
+        exit(1);
+    }
+    novo->valor = valor;
+    novo->proximo = NULL;
+    return novo;
+}
+
+No *inserir_fim(No *inicio, int valor) {
+    No *novo = criar_no(valor);
+    if (inicio == NULL) {
+        return novo;
+    }
+    No *atual = inicio;
+    while (atual->proximo != NULL) {
+        atual = atual->proximo;
+    }
+    atual->proximo = novo;
+    return inicio;
+}
+
+int estatisticas(No *inicio, int *quantidade, int *soma, float *media, int *maior, int *menor) {
+    if (inicio == NULL) {
+        return 0;
+    }
+
+    *quantidade = 0;
+    *soma = 0;
+    *maior = inicio->valor;
+    *menor = inicio->valor;
+
+    No *atual = inicio;
+    while (atual != NULL) {
+        *quantidade = *quantidade + 1;
+        *soma = *soma + atual->valor;
+        if (atual->valor > *maior) {
+            *maior = atual->valor;
+        }
+        if (atual->valor < *menor) {
+            *menor = atual->valor;
+        }
+        atual = atual->proximo;
+    }
+
+    *media = (float) *soma / *quantidade;
+    return 1;
+}
+
+void imprimir(No *inicio) {
+    No *atual = inicio;
+    while (atual != NULL) {
+        printf("%d -> ", atual->valor);
+        atual = atual->proximo;
+    }
+    printf("NULL\n");
+}
+
+void liberar(No *inicio) {
+    No *atual = inicio;
+    while (atual != NULL) {
+        No *proximo = atual->proximo;
+        free(atual);
+        atual = proximo;
+    }
+}
+
+int main() {
+    No *lista = NULL;
+    int quantidade, soma, maior, menor;
+    float media;
+
+    if (!estatisticas(lista, &quantidade, &soma, &media, &maior, &menor)) {
+        printf("Lista vazia, nao ha estatisticas.\n\n");
+    }
+
+    lista = inserir_fim(lista, 8);
+    lista = inserir_fim(lista, 3);
+    lista = inserir_fim(lista, 15);
+    lista = inserir_fim(lista, 6);
+    lista = inserir_fim(lista, 10);
+    imprimir(lista);
+
+    if (estatisticas(lista, &quantidade, &soma, &media, &maior, &menor)) {
+        printf("Quantidade: %d\n", quantidade);
+        printf("Soma: %d\n", soma);
+        printf("Media: %.2f\n", media);
+        printf("Maior: %d\n", maior);
+        printf("Menor: %d\n", menor);
+    }
+
+    liberar(lista);
+    return 0;
+}
