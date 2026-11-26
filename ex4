@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct No {
+    int valor;
+    struct No *proximo;
+} No;
+
+No *criar_no(int valor) {
+    No *novo = (No *) malloc(sizeof(No));
+    if (novo == NULL) {
+        printf("Erro de memoria\n");
+        exit(1);
+    }
+    novo->valor = valor;
+    novo->proximo = NULL;
+    return novo;
+}
+
+No *inserir_fim(No *inicio, int valor) {
+    No *novo = criar_no(valor);
+    if (inicio == NULL) {
+        return novo;
+    }
+    No *atual = inicio;
+    while (atual->proximo != NULL) {
+        atual = atual->proximo;
+    }
+    atual->proximo = novo;
+    return inicio;
+}
+
+No *buscar(No *inicio, int valor, int *posicao) {
+    No *atual = inicio;
+    int contador = 1;
+    while (atual != NULL) {
+        if (atual->valor == valor) {
+            *posicao = contador;
+            return atual;
+        }
+        atual = atual->proximo;
+        contador++;
+    }
+    *posicao = 0;
+    return NULL;
+}
+
+void imprimir(No *inicio) {
+    No *atual = inicio;
+    while (atual != NULL) {
+        printf("%d -> ", atual->valor);
+        atual = atual->proximo;
+    }
+    printf("NULL\n");
+}
+
+void liberar(No *inicio) {
+    No *atual = inicio;
+    while (atual != NULL) {
+        No *proximo = atual->proximo;
+        free(atual);
+        atual = proximo;
+    }
+}
+
+int main() {
+    No *lista = NULL;
+    No *encontrado;
+    int posicao;
+
+    lista = inserir_fim(lista, 10);
+    lista = inserir_fim(lista, 20);
+    lista = inserir_fim(lista, 30);
+    lista = inserir_fim(lista, 40);
+    lista = inserir_fim(lista, 50);
+    imprimir(lista);
+
+    encontrado = buscar(lista, 30, &posicao);
+    if (encontrado != NULL) {
+        printf("Valor 30 encontrado no endereco %p, posicao %d\n", (void *) encontrado, posicao);
+    } else {
+        printf("Valor 30 nao encontrado\n");
+    }
+
+    encontrado = buscar(lista, 99, &posicao);
+    if (encontrado != NULL) {
+        printf("Valor 99 encontrado no endereco %p, posicao %d\n", (void *) encontrado, posicao);
+    } else {
+        printf("Valor 99 nao encontrado\n");
+    }
+
+    liberar(lista);
+    return 0;
+}
