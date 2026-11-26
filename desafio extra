@@ -1,0 +1,15 @@
+1- A lista simplesmente encadeada é aquela em que cada nó guarda o dado e um único ponteiro, que aponta para o próximo nó. Por isso só dá para andar para frente, 
+do início até o NULL. Ela é fácil de entender e de programar, gasta pouca memória, já que cada nó tem só um ponteiro, e inserir ou remover no início é rápido. 
+Em compensação, não dá para voltar para o nó anterior, para remover um nó é preciso guardar o anterior durante a busca, e inserir no final exige percorrer a lista inteira. 
+Ela serve bem para lista de tarefas, agenda de contatos, pilhas e filas simples e qualquer situação em que a lista só é percorrida em um sentido.
+
+2- A lista duplamente encadeada tem dois ponteiros em cada nó, um para o próximo e outro para o anterior, o que permite percorrer a lista nos dois sentidos. 
+  A vantagem é que dá para andar para frente e para trás, e remover um nó fica mais fácil, porque ele já sabe quem é o anterior. 
+  A desvantagem é que ela usa mais memória por causa do segundo ponteiro, e a inserção e a remoção dão mais trabalho, já que é preciso acertar os ponteiros dos dois vizinhos, o que aumenta a chance de erro. 
+  Ela é usada nos botões "voltar" e "avançar" do navegador, em listas de músicas com "anterior" e "próxima" e no desfazer e refazer de editores de texto.
+
+3- Na lista circular, o último nó aponta de volta para o primeiro, então a lista forma um círculo e não existe NULL no final. 
+Ela pode ser simples ou dupla. Sua vantagem é que dá para continuar andando sem parar e, a partir de qualquer nó, chegar em todos os outros, o que é ótimo para coisas que se repetem em ciclo. 
+A desvantagem é que, se o programa esperar um NULL para parar, ele entra em laço infinito, então é preciso comparar com o nó de partida para saber que deu a volta completa. 
+Além disso, a inserção e a remoção exigem cuidado para manter o último nó ligado ao primeiro. 
+Ela é usada em playlists em modo repetição, no escalonamento de processos do sistema operacional e em jogos de turnos, em que os jogadores se revezam sempre na mesma ordem.
