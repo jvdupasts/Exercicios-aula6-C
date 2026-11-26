@@ -1,0 +1,155 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Tarefa {
+    int id;
+    char descricao[100];
+    int concluida;
+    struct Tarefa *proximo;
+} Tarefa;
+
+void ler_texto(char *texto, int tamanho) {
+    fgets(texto, tamanho, stdin);
+    texto[strcspn(texto, "\n")] = '\0';
+}
+
+Tarefa *adicionar_tarefa(Tarefa *inicio, int id, char *descricao) {
+    Tarefa *nova = (Tarefa *) malloc(sizeof(Tarefa));
+    if (nova == NULL) {
+        printf("Erro de memoria\n");
+        return inicio;
+    }
+    nova->id = id;
+    strcpy(nova->descricao, descricao);
+    nova->concluida = 0;
+    nova->proximo = NULL;
+
+    if (inicio == NULL) {
+        return nova;
+    }
+    Tarefa *atual = inicio;
+    while (atual->proximo != NULL) {
+        atual = atual->proximo;
+    }
+    atual->proximo = nova;
+    return inicio;
+}
+
+void listar_tarefas(Tarefa *inicio) {
+    if (inicio == NULL) {
+        printf("Nenhuma tarefa cadastrada.\n");
+        return;
+    }
+    Tarefa *atual = inicio;
+    while (atual != NULL) {
+        printf("[%d] %s - ", atual->id, atual->descricao);
+        if (atual->concluida) {
+            printf("Concluida\n");
+        } else {
+            printf("Pendente\n");
+        }
+        atual = atual->proximo;
+    }
+}
+
+void concluir_tarefa(Tarefa *inicio, int id) {
+    Tarefa *atual = inicio;
+    while (atual != NULL && atual->id != id) {
+        atual = atual->proximo;
+    }
+    if (atual == NULL) {
+        printf("Tarefa nao encontrada.\n");
+    } else {
+        atual->concluida = 1;
+        printf("Tarefa marcada como concluida.\n");
+    }
+}
+
+Tarefa *remover_tarefa(Tarefa *inicio, int id) {
+    Tarefa *anterior = NULL;
+    Tarefa *atual = inicio;
+
+    while (atual != NULL && atual->id != id) {
+        anterior = atual;
+        atual = atual->proximo;
+    }
+
+    if (atual == NULL) {
+        printf("Tarefa nao encontrada.\n");
+        return inicio;
+    }
+
+    if (anterior == NULL) {
+        inicio = atual->proximo;
+    } else {
+        anterior->proximo = atual->proximo;
+    }
+    free(atual);
+    printf("Tarefa removida.\n");
+    return inicio;
+}
+
+void liberar_tarefas(Tarefa *inicio) {
+    Tarefa *atual = inicio;
+    while (atual != NULL) {
+        Tarefa *proxima = atual->proximo;
+        free(atual);
+        atual = proxima;
+    }
+}
+
+int main() {
+    Tarefa *tarefas = NULL;
+    char entrada[10];
+    char descricao[100];
+    int opcao;
+    int id;
+    int proximo_id = 1;
+
+    do {
+        printf("\n--- SISTEMA DE TAREFAS ---\n");
+        printf("1 - Adicionar tarefa\n");
+        printf("2 - Listar tarefas\n");
+        printf("3 - Concluir tarefa\n");
+        printf("4 - Remover tarefa\n");
+        printf("0 - Sair\n");
+        printf("Escolha: ");
+        ler_texto(entrada, 10);
+        opcao = atoi(entrada);
+
+        switch (opcao) {
+            case 1:
+                printf("Descricao: ");
+                ler_texto(descricao, 100);
+                tarefas = adicionar_tarefa(tarefas, proximo_id, descricao);
+                printf("Tarefa %d adicionada.\n", proximo_id);
+                proximo_id++;
+                break;
+            case 2:
+                listar_tarefas(tarefas);
+                break;
+            case 3:
+                printf("Numero da tarefa: ");
+                ler_texto(entrada, 10);
+                id = atoi(entrada);
+                concluir_tarefa(tarefas, id);
+                break;
+            case 4:
+                printf("Numero da tarefa: ");
+                ler_texto(entrada, 10);
+                id = atoi(entrada);
+                tarefas = remover_tarefa(tarefas, id);
+                break;
+            case 0:
+                break;
+            default:
+                printf("Opcao invalida.\n");
+        }
+    } while (opcao != 0);
+
+    liberar_tarefas(tarefas);
+    tarefas = NULL;
+    printf("Memoria liberada. Ate logo!\n");
+    return 0;
+}
