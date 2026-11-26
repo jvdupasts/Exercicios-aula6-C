@@ -1,0 +1,151 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Contato {
+    char nome[50];
+    char telefone[20];
+    struct Contato *proximo;
+} Contato;
+
+void ler_texto(char *texto, int tamanho) {
+    fgets(texto, tamanho, stdin);
+    texto[strcspn(texto, "\n")] = '\0';
+}
+
+Contato *adicionar_contato(Contato *inicio, char *nome, char *telefone) {
+    Contato *novo = (Contato *) malloc(sizeof(Contato));
+    if (novo == NULL) {
+        printf("Erro de memoria\n");
+        return inicio;
+    }
+    strcpy(novo->nome, nome);
+    strcpy(novo->telefone, telefone);
+    novo->proximo = NULL;
+
+    if (inicio == NULL) {
+        return novo;
+    }
+    Contato *atual = inicio;
+    while (atual->proximo != NULL) {
+        atual = atual->proximo;
+    }
+    atual->proximo = novo;
+    return inicio;
+}
+
+void listar_contatos(Contato *inicio) {
+    if (inicio == NULL) {
+        printf("Agenda vazia.\n");
+        return;
+    }
+    Contato *atual = inicio;
+    int numero = 1;
+    while (atual != NULL) {
+        printf("%d. %s - %s\n", numero, atual->nome, atual->telefone);
+        atual = atual->proximo;
+        numero++;
+    }
+}
+
+Contato *buscar_contato(Contato *inicio, char *nome) {
+    Contato *atual = inicio;
+    while (atual != NULL) {
+        if (strcmp(atual->nome, nome) == 0) {
+            return atual;
+        }
+        atual = atual->proximo;
+    }
+    return NULL;
+}
+
+Contato *remover_contato(Contato *inicio, char *nome) {
+    Contato *anterior = NULL;
+    Contato *atual = inicio;
+
+    while (atual != NULL && strcmp(atual->nome, nome) != 0) {
+        anterior = atual;
+        atual = atual->proximo;
+    }
+
+    if (atual == NULL) {
+        printf("Contato nao encontrado.\n");
+        return inicio;
+    }
+
+    if (anterior == NULL) {
+        inicio = atual->proximo;
+    } else {
+        anterior->proximo = atual->proximo;
+    }
+    free(atual);
+    printf("Contato removido.\n");
+    return inicio;
+}
+
+void liberar_agenda(Contato *inicio) {
+    Contato *atual = inicio;
+    while (atual != NULL) {
+        Contato *proximo = atual->proximo;
+        free(atual);
+        atual = proximo;
+    }
+}
+
+int main() {
+    Contato *agenda = NULL;
+    Contato *encontrado;
+    char entrada[10];
+    char nome[50];
+    char telefone[20];
+    int opcao;
+
+    do {
+        printf("\n--- AGENDA TELEFONICA ---\n");
+        printf("1 - Adicionar contato\n");
+        printf("2 - Listar contatos\n");
+        printf("3 - Buscar contato\n");
+        printf("4 - Remover contato\n");
+        printf("0 - Sair\n");
+        printf("Escolha: ");
+        ler_texto(entrada, 10);
+        opcao = atoi(entrada);
+
+        switch (opcao) {
+            case 1:
+                printf("Nome: ");
+                ler_texto(nome, 50);
+                printf("Telefone: ");
+                ler_texto(telefone, 20);
+                agenda = adicionar_contato(agenda, nome, telefone);
+                printf("Contato adicionado.\n");
+                break;
+            case 2:
+                listar_contatos(agenda);
+                break;
+            case 3:
+                printf("Nome para buscar: ");
+                ler_texto(nome, 50);
+                encontrado = buscar_contato(agenda, nome);
+                if (encontrado != NULL) {
+                    printf("Encontrado: %s - %s\n", encontrado->nome, encontrado->telefone);
+                } else {
+                    printf("Contato nao encontrado.\n");
+                }
+                break;
+            case 4:
+                printf("Nome para remover: ");
+                ler_texto(nome, 50);
+                agenda = remover_contato(agenda, nome);
+                break;
+            case 0:
+                printf("Encerrando...\n");
+                break;
+            default:
+                printf("Opcao invalida.\n");
+        }
+    } while (opcao != 0);
+
+    liberar_agenda(agenda);
+    return 0;
+}
