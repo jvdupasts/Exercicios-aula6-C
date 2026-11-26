@@ -1,0 +1,147 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct No {
+    int valor;
+    struct No *proximo;
+} No;
+
+No *criar_no(int valor) {
+    No *novo = (No *) malloc(sizeof(No));
+    if (novo == NULL) {
+        printf("Erro de memoria\n");
+        exit(1);
+    }
+    novo->valor = valor;
+    novo->proximo = NULL;
+    return novo;
+}
+
+No *inserir_fim(No *inicio, int valor) {
+    No *novo = criar_no(valor);
+    if (inicio == NULL) {
+        return novo;
+    }
+    No *atual = inicio;
+    while (atual->proximo != NULL) {
+        atual = atual->proximo;
+    }
+    atual->proximo = novo;
+    return inicio;
+}
+
+No *remover_inicio(No *inicio) {
+    if (inicio == NULL) {
+        printf("Lista vazia\n");
+        return NULL;
+    }
+    No *segundo = inicio->proximo;
+    free(inicio);
+    return segundo;
+}
+
+No *remover_fim(No *inicio) {
+    if (inicio == NULL) {
+        printf("Lista vazia\n");
+        return NULL;
+    }
+    if (inicio->proximo == NULL) {
+        free(inicio);
+        return NULL;
+    }
+    No *atual = inicio;
+    while (atual->proximo->proximo != NULL) {
+        atual = atual->proximo;
+    }
+    free(atual->proximo);
+    atual->proximo = NULL;
+    return inicio;
+}
+
+No *remover_valor(No *inicio, int valor) {
+    if (inicio == NULL) {
+        printf("Lista vazia\n");
+        return NULL;
+    }
+    if (inicio->valor == valor) {
+        No *segundo = inicio->proximo;
+        free(inicio);
+        return segundo;
+    }
+    No *anterior = inicio;
+    No *atual = inicio->proximo;
+    while (atual != NULL && atual->valor != valor) {
+        anterior = atual;
+        atual = atual->proximo;
+    }
+    if (atual == NULL) {
+        printf("Valor nao encontrado\n");
+        return inicio;
+    }
+    anterior->proximo = atual->proximo;
+    free(atual);
+    return inicio;
+}
+
+void imprimir(No *inicio) {
+    No *atual = inicio;
+    while (atual != NULL) {
+        printf("%d -> ", atual->valor);
+        atual = atual->proximo;
+    }
+    printf("NULL\n");
+}
+
+void liberar(No *inicio) {
+    No *atual = inicio;
+    while (atual != NULL) {
+        No *proximo = atual->proximo;
+        free(atual);
+        atual = proximo;
+    }
+}
+
+int main() {
+    No *lista = NULL;
+
+    printf("Remover inicio com lista vazia:\n");
+    lista = remover_inicio(lista);
+
+    lista = inserir_fim(lista, 10);
+    lista = inserir_fim(lista, 20);
+    lista = inserir_fim(lista, 30);
+    lista = inserir_fim(lista, 40);
+    lista = inserir_fim(lista, 50);
+    printf("\nLista original: ");
+    imprimir(lista);
+
+    lista = remover_inicio(lista);
+    printf("Depois de remover o inicio: ");
+    imprimir(lista);
+
+    lista = remover_fim(lista);
+    printf("Depois de remover o fim: ");
+    imprimir(lista);
+
+    lista = remover_valor(lista, 30);
+    printf("Depois de remover o valor 30: ");
+    imprimir(lista);
+
+    lista = remover_valor(lista, 99);
+    printf("Depois de tentar remover o 99: ");
+    imprimir(lista);
+
+    lista = remover_valor(lista, 20);
+    printf("Depois de remover o valor 20: ");
+    imprimir(lista);
+
+    lista = remover_fim(lista);
+    printf("Depois de remover o ultimo elemento: ");
+    imprimir(lista);
+
+    printf("Remover fim com lista vazia:\n");
+    lista = remover_fim(lista);
+
+    liberar(lista);
+    return 0;
+}
