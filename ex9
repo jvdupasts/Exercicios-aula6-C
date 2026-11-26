@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct No {
+    int valor;
+    struct No *proximo;
+} No;
+
+No *criar_no(int valor) {
+    No *novo = (No *) malloc(sizeof(No));
+    if (novo == NULL) {
+        printf("Erro de memoria\n");
+        exit(1);
+    }
+    novo->valor = valor;
+    novo->proximo = NULL;
+    return novo;
+}
+
+No *inserir_fim(No *inicio, int valor) {
+    No *novo = criar_no(valor);
+    if (inicio == NULL) {
+        return novo;
+    }
+    No *atual = inicio;
+    while (atual->proximo != NULL) {
+        atual = atual->proximo;
+    }
+    atual->proximo = novo;
+    return inicio;
+}
+
+No *unir_listas(No *lista1, No *lista2) {
+    if (lista1 == NULL) {
+        return lista2;
+    }
+    No *atual = lista1;
+    while (atual->proximo != NULL) {
+        atual = atual->proximo;
+    }
+    atual->proximo = lista2;
+    return lista1;
+}
+
+void imprimir(No *inicio) {
+    No *atual = inicio;
+    while (atual != NULL) {
+        printf("%d -> ", atual->valor);
+        atual = atual->proximo;
+    }
+    printf("NULL\n");
+}
+
+void liberar(No *inicio) {
+    No *atual = inicio;
+    while (atual != NULL) {
+        No *proximo = atual->proximo;
+        free(atual);
+        atual = proximo;
+    }
+}
+
+int main() {
+    No *lista1 = NULL;
+    No *lista2 = NULL;
+    No *uniao;
+
+    lista1 = inserir_fim(lista1, 1);
+    lista1 = inserir_fim(lista1, 2);
+    lista1 = inserir_fim(lista1, 3);
+
+    lista2 = inserir_fim(lista2, 4);
+    lista2 = inserir_fim(lista2, 5);
+
+    printf("Lista 1: ");
+    imprimir(lista1);
+    printf("Lista 2: ");
+    imprimir(lista2);
+
+    uniao = unir_listas(lista1, lista2);
+    printf("Uniao:   ");
+    imprimir(uniao);
+
+    liberar(uniao);
+    return 0;
+}
